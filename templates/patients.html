@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Patient Records</h1>
+<table>
+<tr><th>Patient</th><th>DOB</th><th>Phone</th><th>Allergies</th><th>Record</th></tr>
+{% for p in patients %}
+<tr><td>{{ p.name }}</td><td>{{ p.dob }}</td><td>{{ p.phone }}</td><td>{{ p.allergies }}</td><td><a href="{{ url_for('patient_record', patient_id=p.id) }}">Open EHR</a></td></tr>
+{% endfor %}
+</table>
+{% endblock %}
