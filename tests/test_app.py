@@ -6,6 +6,7 @@ import pytest
 os.environ["DATABASE_URL"] = "sqlite:///:memory:"
 
 from app import app, db, Appointment, Doctor, Patient, User
+from werkzeug.security import generate_password_hash
 
 
 @pytest.fixture
@@ -18,7 +19,7 @@ def client():
         patient = Patient(name="Test Patient", dob=datetime(1990, 1, 1).date())
         db.session.add_all([doctor, patient])
         db.session.flush()
-        db.session.add(User(username="patient", password_hash="scrypt:32768:8:1$placeholder$placeholder", role="patient", patient_id=patient.id))
+        db.session.add(User(username="patient", password_hash=generate_password_hash("Patient123!"), role="patient", patient_id=patient.id))
         db.session.commit()
     with app.test_client() as test_client:
         yield test_client
@@ -64,3 +65,18 @@ def test_role_access_blocks_patient_from_queue(client):
     response = client.get("/queue")
     assert response.status_code == 302
     assert "/dashboard" in response.headers["Location"]
+
+
+def test_valid_login_sets_patient_session(client):
+    response = client.post("/login", data={"username": "patient", "password": "Patient123!"})
+    assert response.status_code == 302
+    with client.session_transaction() as session:
+        assert session["role"] == "patient"
+        assert session["patient_id"] == 1
+
+
+def test_patient_can_open_own_record_after_login(client):
+    client.post("/login", data={"username": "patient", "password": "Patient123!"})
+    response = client.get("/patients/1")
+    assert response.status_code == 200
+    assert b"Test Patient" in response.data
