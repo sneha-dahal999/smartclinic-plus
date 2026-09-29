@@ -2,6 +2,12 @@
 
 SmartClinic+ is a Python/Flask outpatient healthcare management prototype aligned to the SENG205 T2 2026 project brief.
 
+## Team
+
+- **Dinuwan Kavinda Karunathilaka — K250309 — Requirements and project analysis**
+- **Sneha Dahal — K250068 — Design, architecture and prototype**
+- **Adarsha Panta — K250081 — QA, testing and project management**
+
 ## Implemented prototype
 
 - Role-based login for admin, doctor, nurse and patient users
