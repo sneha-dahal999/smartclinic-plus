@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block content %}<h1>Operational Analytics</h1>
+<div class="cards"><div><span>Peak appointment hour</span><strong>{{ peak_hour if peak_hour is not none else 'N/A' }}</strong></div><div><span>Average queue wait</span><strong>{{ average_wait }} min</strong></div></div>
+<section class="panel"><h2>Appointments by hour</h2>
+{% for hour, count in by_hour %}<p>{{ '%02d:00'|format(hour) }} — {{ count }} appointment(s)</p>{% else %}<p>No appointment history yet.</p>{% endfor %}
+</section>
+<p class="muted">This prototype uses historical appointment volume to highlight peak periods for staffing decisions.</p>
+{% endblock %}
