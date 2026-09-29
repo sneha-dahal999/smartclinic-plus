@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Smart Queue</h1>
+<table>
+<tr><th>Patient</th><th>Priority</th><th>Check-in</th><th>Status</th><th>Action</th></tr>
+{% for e in entries %}
+{% set a = appointments[e.appointment_id] %}
+<tr>
+<td>{{ patients[a.patient_id].name }}</td><td>{{ e.priority }}</td><td>{{ e.check_in_at.strftime('%H:%M') }}</td><td>{{ e.status }}</td>
+<td>
+{% if e.status == 'Waiting' %}<form method="post" action="{{ url_for('call_queue', entry_id=e.id) }}" class="inline"><button>Call</button></form>{% endif %}
+{% if e.status == 'In Consultation' %}<form method="post" action="{{ url_for('complete_queue', entry_id=e.id) }}" class="inline"><button>Complete</button></form>{% endif %}
+</td>
+</tr>
+{% else %}<tr><td colspan="5">Queue is empty.</td></tr>{% endfor %}
+</table>
+{% endblock %}

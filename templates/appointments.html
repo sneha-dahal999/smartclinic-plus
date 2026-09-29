@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="page-head"><h1>Appointments</h1><a class="button" href="{{ url_for('new_appointment') }}">+ New appointment</a></div>
+<table>
+<tr><th>Date/time</th><th>Patient</th><th>Doctor</th><th>Reason</th><th>Status</th><th>Action</th></tr>
+{% for a in appointments %}
+<tr>
+<td>{{ a.scheduled_at.strftime('%d %b %Y %H:%M') }}</td>
+<td>{{ patients[a.patient_id].name }}</td>
+<td>{{ doctors[a.doctor_id].name }}</td>
+<td>{{ a.reason }}</td>
+<td>{{ a.status }}</td>
+<td>
+{% if a.status not in ['Cancelled','Completed'] %}
+<form method="post" action="{{ url_for('cancel_appointment', appointment_id=a.id) }}" class="inline"><button class="danger-btn">Cancel</button></form>
+<form method="post" action="{{ url_for('reschedule_appointment', appointment_id=a.id) }}" class="inline"><input type="datetime-local" name="scheduled_at" required><button>Reschedule</button></form>
+<form method="post" action="{{ url_for('check_in', appointment_id=a.id) }}" class="inline"><button>Check in</button></form>
+{% endif %}
+</td>
+</tr>
+{% else %}<tr><td colspan="6">No appointments yet.</td></tr>{% endfor %}
+</table>
+{% endblock %}

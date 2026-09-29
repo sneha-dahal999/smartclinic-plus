@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="auth-card">
+  <h1>SmartClinic+</h1>
+  <p>Secure outpatient clinic management</p>
+  <form method="post">
+    <label>Username<input name="username" required autocomplete="username"></label>
+    <label>Password<input type="password" name="password" required autocomplete="current-password"></label>
+    <button type="submit">Sign in</button>
+  </form>
+  <p class="muted">Use the demo credentials supplied in the project README when testing locally.</p>
+</section>
+{% endblock %}

@@ -1,0 +1,15 @@
+services:
+  db:
+    image: postgres:16
+    container_name: smartclinic-postgres
+    environment:
+      POSTGRES_DB: smartclinic
+      POSTGRES_USER: smartclinic
+      POSTGRES_PASSWORD: smartclinic
+    ports:
+      - "5432:5432"
+    volumes:
+      - smartclinic_pgdata:/var/lib/postgresql/data
+
+volumes:
+  smartclinic_pgdata:
