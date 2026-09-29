@@ -204,6 +204,8 @@ def login():
             session.clear()
             session["user_id"] = user.id
             session["role"] = user.role
+            session["patient_id"] = user.patient_id
+            session["doctor_id"] = user.doctor_id
             flash("Login successful.", "success")
             return redirect(url_for("dashboard"))
         flash("Invalid username or password.", "danger")
@@ -289,6 +291,33 @@ def new_appointment():
             flash("That time slot is already booked for the doctor or patient.", "danger")
 
     return render_template("appointment_form.html", doctors=doctors, patients=patients)
+
+
+@app.route("/appointments/<int:appointment_id>/reschedule", methods=["POST"])
+@login_required
+def reschedule_appointment(appointment_id):
+    appointment = db.session.get(Appointment, appointment_id)
+    if not appointment:
+        flash("Appointment not found.", "danger")
+        return redirect(url_for("appointments"))
+    if session["role"] == "patient" and appointment.patient_id != session.get("patient_id"):
+        flash("You can only reschedule your own appointments.", "danger")
+        return redirect(url_for("appointments"))
+    try:
+        new_time = datetime.fromisoformat(request.form["scheduled_at"])
+        if new_time <= datetime.utcnow():
+            flash("New appointment time must be in the future.", "danger")
+            return redirect(url_for("appointments"))
+        appointment.scheduled_at = new_time
+        db.session.commit()
+        flash("Appointment rescheduled.", "success")
+    except (ValueError, KeyError):
+        db.session.rollback()
+        flash("Please provide a valid date and time.", "danger")
+    except IntegrityError:
+        db.session.rollback()
+        flash("That new time is already booked for the doctor or patient.", "danger")
+    return redirect(url_for("appointments"))
 
 
 @app.route("/appointments/<int:appointment_id>/cancel", methods=["POST"])
