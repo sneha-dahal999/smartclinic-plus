@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Staff Tasks</h1>
+<form method="post" action="{{ url_for('new_task') }}" class="form-card">
+<label>Task<input name="title" required placeholder="e.g. Check patient vitals"></label>
+<label>Patient<select name="patient_id"><option value="">General task</option>{% for p in patients.values() %}<option value="{{ p.id }}">{{ p.name }}</option>{% endfor %}</select></label>
+<label>Assign to<select name="assigned_to"><option value="">Unassigned</option>{% for u in users.values() if u.role in ['doctor','nurse'] %}<option value="{{ u.id }}">{{ u.username }} ({{ u.role }})</option>{% endfor %}</select></label>
+<button>Create task</button>
+</form>
+<table><tr><th>Task</th><th>Patient</th><th>Assigned</th><th>Status</th><th></th></tr>
+{% for t in tasks %}<tr><td>{{ t.title }}</td><td>{{ patients[t.patient_id].name if t.patient_id else 'General' }}</td><td>{{ users[t.assigned_to].username if t.assigned_to else 'Unassigned' }}</td><td>{{ t.status }}</td><td>{% if t.status != 'Completed' %}<form method="post" action="{{ url_for('complete_task', task_id=t.id) }}"><button>Complete</button></form>{% endif %}</td></tr>{% endfor %}
+</table>
+{% endblock %}
