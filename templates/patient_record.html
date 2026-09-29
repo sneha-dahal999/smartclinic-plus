@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>{{ patient.name }} — Electronic Health Record</h1>
+<div class="grid2">
+<section class="panel"><h2>Patient details</h2><p><strong>DOB:</strong> {{ patient.dob }}</p><p><strong>Allergies:</strong> {{ patient.allergies }}</p><p><strong>History:</strong> {{ patient.medical_history }}</p></section>
+<section class="panel"><h2>Lab results</h2>
+{% for lab in labs %}<p><strong>{{ lab.test_name }}</strong>: {{ lab.result }} ({{ lab.status }})</p>{% else %}<p>No lab results.</p>{% endfor %}
+{% if current_user.role in ['admin','doctor','nurse'] %}
+<form method="post" action="{{ url_for('add_lab', patient_id=patient.id) }}"><input name="test_name" placeholder="Test name" required><input name="result" placeholder="Result" required><button>Add result</button></form>
+{% endif %}
+</section></div>
+<section class="panel"><h2>Prescriptions</h2>
+{% for p in prescriptions %}<p><strong>{{ p.medication }}</strong> — {{ p.dosage }} — {{ p.instructions }}</p>{% else %}<p>No prescriptions.</p>{% endfor %}
+{% if current_user.role in ['admin','doctor'] %}
+<form method="post" action="{{ url_for('add_prescription', patient_id=patient.id) }}"><input name="medication" placeholder="Medication" required><input name="dosage" placeholder="Dosage" required><input name="instructions" placeholder="Instructions" required><button>Issue prescription</button></form>
+{% endif %}
+</section>
+{% endblock %}
