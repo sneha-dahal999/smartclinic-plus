@@ -57,11 +57,14 @@ def test_double_booking_is_rejected(client):
 
 
 def test_role_access_blocks_patient_from_queue(client):
-    with client.session_transaction() as session:
+    with client.application.app_context():
         user = User.query.filter_by(username="patient").first()
-        session["user_id"] = user.id
+        user_id = user.id
+        patient_id = user.patient_id
+    with client.session_transaction() as session:
+        session["user_id"] = user_id
         session["role"] = "patient"
-        session["patient_id"] = user.patient_id
+        session["patient_id"] = patient_id
     response = client.get("/queue")
     assert response.status_code == 302
     assert "/dashboard" in response.headers["Location"]
