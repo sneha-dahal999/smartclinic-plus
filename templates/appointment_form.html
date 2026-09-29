@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Book appointment</h1>
+<form method="post" class="form-card">
+{% if current_user.role != 'patient' %}
+<label>Patient<select name="patient_id" required>{% for p in patients %}<option value="{{ p.id }}">{{ p.name }}</option>{% endfor %}</select></label>
+{% endif %}
+<label>Doctor<select name="doctor_id" required>{% for d in doctors %}<option value="{{ d.id }}">{{ d.name }} — {{ d.specialty }}</option>{% endfor %}</select></label>
+<label>Date and time<input type="datetime-local" name="scheduled_at" required></label>
+<label>Reason<textarea name="reason" maxlength="255"></textarea></label>
+<button type="submit">Book appointment</button>
+</form>
+<p class="muted">The database prevents the same doctor or patient from being booked twice at the same time.</p>
+{% endblock %}
