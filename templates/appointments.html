@@ -13,6 +13,7 @@
 <td>
 {% if a.status not in ['Cancelled','Completed'] %}
 <form method="post" action="{{ url_for('cancel_appointment', appointment_id=a.id) }}" class="inline"><button class="danger-btn">Cancel</button></form>
+<form method="post" action="{{ url_for('reschedule_appointment', appointment_id=a.id) }}" class="inline"><input type="datetime-local" name="scheduled_at" required><button>Reschedule</button></form>
 <form method="post" action="{{ url_for('check_in', appointment_id=a.id) }}" class="inline"><button>Check in</button></form>
 {% endif %}
 </td>
